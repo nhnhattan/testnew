@@ -1,72 +1,63 @@
 <!DOCTYPE html>
 <html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Chụp và Mở Ảnh</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        #capture-div {
-            width: 300px;
-            height: 200px;
-            background: lightblue;
-            text-align: center;
-            line-height: 200px;
-            font-size: 20px;
-        }
-        button {
-            margin-top: 20px;
-            padding: 10px 20px;
-            font-size: 16px;
-        }
+      #capture-div {
+          width: 300px;
+          height: 200px;
+          background: lightblue;
+          text-align: center;
+          line-height: 200px;
+          font-size: 20px;
+      }
+      button {
+          margin-top: 20px;
+          padding: 10px 20px;
+          font-size: 16px;
+      }
     </style>
-</head>
-<body>
-    <div id="capture-div">
-        Đây là nội dung cần chụp
-    </div>
+  </head>
+  <body>
+    <div id="capture-div">Đây là nội dung cần chụp</div>
     <button id="capture-btn">Chụp và Mở Hình</button>
 
     <script>
-        // Kiểm tra xem có phải WebView hay không (Facebook, Zalo, v.v.)
-        function isWebView() {
-            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-            return userAgent.includes("FB") || userAgent.includes("Zalo") || userAgent.includes("Line");
-        }
+      // Kiểm tra xem có phải WebView hay không (Facebook, Zalo, v.v.)
+      function isWebView() {
+          const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+          return userAgent.includes("FB") || userAgent.includes("Zalo") || userAgent.includes("Line");
+      }
 
-        // Xử lý khi nhấn nút
-        $('#capture-btn').click(function () {
-            const targetDiv = $('#capture-div')[0];  // Lấy thẻ <div> cần chụp
+      // Xử lý khi nhấn nút
+      $('#capture-btn').click(function () {
+          const targetDiv = $('#capture-div')[0];  // Lấy thẻ <div> cần chụp
 
-            // Dùng html2canvas để chụp ảnh
-            html2canvas(targetDiv).then(function (canvas) {
-                canvas.toBlob(function (blob) {
-                    const imgUrl = URL.createObjectURL(blob);  // Tạo URL từ Blob
+          // Dùng html2canvas để chụp ảnh
+          html2canvas(targetDiv).then(function (canvas) {
+              canvas.toBlob(function (blob) {
+                  const imgUrl = URL.createObjectURL(blob);  // Tạo URL từ Blob
 
-                    if (isWebView()) {
-                        // Nếu trong WebView, mở ảnh trong trình duyệt mặc định
-                        const intentUrl = "intent://viewImage#Intent;" +
-                                          "scheme=https;" +
-                                          "package=com.android.chrome;" +
-                                          "S.browser_fallback_url=" + imgUrl + ";end;";
-                        window.location.href = intentUrl;
-                    } else {
-                        // Nếu trong trình duyệt thông thường, mở ảnh trong tab mới và hiển thị ảnh
-                        const newWindow = window.open();
-                        newWindow.document.write(
-                            `<html><body>
-                                <h3>Nhấn chuột phải để lưu ảnh:</h3>
-                                <img src="${imgUrl}" style="max-width: 100%; height: auto;" />
-                            </body></html>`
-                        );
-                    }
-                }, 'image/png');
-            }).catch(function (error) {
-                console.error("Có lỗi khi chụp ảnh:", error);
-                alert("Không thể chụp ảnh trên trình duyệt này!");
-            });
-        });
+                  if (isWebView()) {
+                      // Nếu trong WebView, mở ảnh trong trình duyệt mặc định của Android
+                      window.location.href = imgUrl;
+                  } else {
+                      // Nếu trong trình duyệt thông thường, mở ảnh trong tab mới
+                      const link = document.createElement('a');
+                      link.href = imgUrl;
+                      link.target = "_blank";  // Mở trong tab mới
+                      link.click();
+                  }
+              }, 'image/png');
+          }).catch(function (error) {
+              console.error("Có lỗi khi chụp ảnh:", error);
+              alert("Không thể chụp ảnh trên trình duyệt này!");
+          });
+      });
     </script>
-</body>
+  </body>
 </html>
