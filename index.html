@@ -52,11 +52,14 @@
                                           "S.browser_fallback_url=" + imgUrl + ";end;";
                         window.location.href = intentUrl;
                     } else {
-                        // Nếu trong trình duyệt thông thường, mở ảnh trong tab mới
-                        const link = document.createElement('a');
-                        link.href = imgUrl;
-                        link.target = "_blank";  // Mở trong tab mới
-                        link.click();
+                        // Nếu trong trình duyệt thông thường, mở ảnh trong tab mới và hiển thị ảnh
+                        const newWindow = window.open();
+                        newWindow.document.write(
+                            `<html><body>
+                                <h3>Nhấn chuột phải để lưu ảnh:</h3>
+                                <img src="${imgUrl}" style="max-width: 100%; height: auto;" />
+                            </body></html>`
+                        );
                     }
                 }, 'image/png');
             }).catch(function (error) {
