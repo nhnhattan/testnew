@@ -22,47 +22,47 @@
       }
     </style>
   </head>
-  <body>
-    <div id="capture-div">Đây là nội dung cần chụp</div>
-    <button id="capture-btn">Chụp và Mở Hình</button>
+  <div
+    id="capture-div"
+    style="width: 300px; height: 200px; background: lightblue;"
+  >
+    <p>Đây là nội dung cần chụp</p>
+  </div>
+  <button id="capture-btn">Chụp và tải xuống</button>
 
-    <script>
-      // Kiểm tra xem có phải WebView hay không (Facebook, Zalo, v.v.)
-      function isWebView() {
-        const userAgent =
-          navigator.userAgent || navigator.vendor || window.opera;
-        return (
-          userAgent.includes("FB") ||
-          userAgent.includes("Zalo") ||
-          userAgent.includes("Line")
-        );
-      }
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script>
+        function isWebView() {
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        return userAgent.includes("FB") || userAgent.includes("Zalo") || userAgent.includes("Line");
+    }
+            document.getElementById("capture-btn").addEventListener("click", function () {
+            const targetDiv = document.getElementById("capture-div");
 
-      // Xử lý khi nhấn nút
-      $("#capture-btn").click(function () {
-        const targetDiv = $("#capture-div")[0]; // Lấy thẻ <div> cần chụp
+            html2canvas(targetDiv).then((canvas) => {
+                canvas.toBlob((blob) => {
+                    const blobUrl = URL.createObjectURL(blob);
 
-        // Dùng html2canvas để chụp ảnh
-        html2canvas(targetDiv)
-          .then(function (canvas) {
-            const imgData = canvas.toDataURL("image/png"); // Tạo Data URL
-
-            if (isWebView()) {
-              // Nếu trong WebView, mở ảnh trong trình duyệt mặc định của Android
-              window.location.href = imgData;
-            } else {
-              // Nếu trong trình duyệt thông thường, mở ảnh trong tab mới
-              const link = document.createElement("a");
-              link.href = imgData;
-              link.target = "_blank"; // Mở trong tab mới
-              link.click();
-            }
-          })
-          .catch(function (error) {
-            console.error("Có lỗi khi chụp ảnh:", error);
-            alert("Không thể chụp ảnh trên trình duyệt này!");
-          });
-      });
-    </script>
-  </body>
+                    if (isWebView()) {
+                        // Hiển thị thông báo hoặc tự động mở ảnh trong trình duyệt
+                        const confirmation = confirm(
+                            "Trình duyệt hiện tại không hỗ trợ tải xuống. Bạn có muốn mở trình duyệt mặc định để tải ảnh không?"
+                        );
+                        if (confirmation) {
+                            window.location.href = blobUrl; // Mở URL trong trình duyệt mặc định
+                        }
+                    } else {
+                        // Tải ảnh trực tiếp trong trình duyệt thông thường
+                        const link = document.createElement("a");
+                        link.href = blobUrl;
+                        link.download = "screenshot.png";
+                        link.click();
+                    }
+                }, "image/png");
+            }).catch(err => {
+                alert("Không thể chụp ảnh trên trình duyệt này!");
+                console.error(err);
+            });
+        });
+  </script>
 </html>
