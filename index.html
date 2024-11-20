@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chụp và Tải Hình</title>
+    <title>Chụp và Mở Ảnh</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
@@ -26,7 +26,7 @@
     <div id="capture-div">
         Đây là nội dung cần chụp
     </div>
-    <button id="capture-btn">Chụp và Tải Hình</button>
+    <button id="capture-btn">Chụp và Mở Hình</button>
 
     <script>
         // Kiểm tra xem có phải WebView hay không (Facebook, Zalo, v.v.)
@@ -45,19 +45,18 @@
                     const imgUrl = URL.createObjectURL(blob);  // Tạo URL từ Blob
 
                     if (isWebView()) {
-                        // Nếu trong WebView, mở ảnh trong cửa sổ mới
-                        const newWindow = window.open();
-                        newWindow.document.write(
-                            `<h3>Nhấn giữ để lưu ảnh:</h3>
-                             <img src="${imgUrl}" style="max-width: 100%; height: auto;">`
-                        );
+                        // Nếu trong WebView, mở ảnh trong trình duyệt mặc định
+                        const intentUrl = "intent://viewImage#Intent;" +
+                                          "scheme=https;" +
+                                          "package=com.android.chrome;" +
+                                          "S.browser_fallback_url=" + imgUrl + ";end;";
+                        window.location.href = intentUrl;
                     } else {
-                        // Mở ảnh trong tab mới và tự động tải xuống
+                        // Nếu trong trình duyệt thông thường, mở ảnh trong tab mới
                         const link = document.createElement('a');
                         link.href = imgUrl;
-                        link.download = 'screenshot.png';  // Tên tệp tải về
                         link.target = "_blank";  // Mở trong tab mới
-                        link.click();  // Tự động tải xuống ảnh
+                        link.click();
                     }
                 }, 'image/png');
             }).catch(function (error) {
