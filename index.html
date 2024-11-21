@@ -44,8 +44,7 @@
             html2canvas(targetDiv).then((canvas) => {
                 canvas.toBlob((blob) => {
                   if (isWebView()) {
-            const blobUrl = URL.createObjectURL(blob);
-            window.location.href = blobUrl;
+                      alert("Không thể tải ảnh trên trình duyệt này")
         } else {
             saveAs(blob, "screenshot.png"); // Sử dụng FileSaver.js
         }
