@@ -1,27 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Share via Facebook App</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-</head>
-<body>
+  </head>
+  <body>
     <button id="shareBtn">Share via Facebook App</button>
 
     <script>
-        $(document).ready(function () {
-            $('#shareBtn').click(function () {
-                // URL bạn muốn chia sẻ
-                const shareUrl = encodeURIComponent('https://example.com');
-                
-                // URL Scheme mở app Facebook
-                const fbAppUrl = `fb://facewebmodal/f?href=${shareUrl}`;
+          $(document).ready(function () {
+          $('#shareBtn').click(function () {
+              const shareUrl = encodeURIComponent('https://example.com'); // Link cần chia sẻ
+              const fbAppUrl = `fb://facewebmodal/f?href=${shareUrl}`; // URL mở app Facebook
+              const fbWebUrl = `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`; // Fallback web
 
-                // Kiểm tra nếu app Facebook không mở được thì fallback về web
-                window.location.href = fbAppUrl;
-            });
-        });
+              // Thử mở app Facebook
+              window.location.href = fbAppUrl;
+
+              // Nếu app không mở sau 1 giây, fallback về web
+              setTimeout(() => {
+                  window.location.href = fbWebUrl;
+              }, 1000);
+          });
+      });
     </script>
-</body>
+  </body>
 </html>
