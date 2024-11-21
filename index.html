@@ -31,6 +31,8 @@
   <button id="capture-btn">Chụp và tải xuống</button>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
   <script>
         function isWebView() {
         const userAgent = navigator.userAgent || navigator.vendor || window.opera;
@@ -41,21 +43,16 @@
 
             html2canvas(targetDiv).then((canvas) => {
                 canvas.toBlob((blob) => {
-                    const blobUrl = URL.createObjectURL(blob);
-
-                    if (isWebView()) {
-                        window.location.href = blobUrl; // Mở URL trong trình duyệt mặc định
-                    } else {
-                        // Tải ảnh trực tiếp trong trình duyệt thông thường
-                        const link = document.createElement("a");
-                        link.href = blobUrl;
-                        link.download = "screenshot.png";
-                        link.click();
-                    }
+                  if (isWebView()) {
+            const blobUrl = URL.createObjectURL(blob);
+            window.location.href = blobUrl;
+        } else {
+            saveAs(blob, "screenshot.png"); // Sử dụng FileSaver.js
+        }
                 }, "image/png");
             }).catch(err => {
-                alert("Không thể chụp ảnh trên trình duyệt này!");
-                console.error(err);
+              alert("Không thể chụp ảnh trên trình duyệt này!");
+              console.error(err);
             });
         });
   </script>
