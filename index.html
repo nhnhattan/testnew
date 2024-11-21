@@ -1,68 +1,27 @@
 <!DOCTYPE html>
-<html lang="vi">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chụp và Mở Ảnh</title>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Share via Facebook App</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <style>
-      #capture-div {
-        width: 300px;
-        height: 200px;
-        background: lightblue;
-        text-align: center;
-        line-height: 200px;
-        font-size: 20px;
-      }
-      button {
-        margin-top: 20px;
-        padding: 10px 20px;
-        font-size: 16px;
-      }
-    </style>
-  </head>
-  <div
-    id="capture-div"
-    style="width: 300px; height: 200px; background: lightblue;"
-  >
-    <p>Đây là nội dung cần chụp</p>
-  </div>
-  <button id="capture-btn">Chụp và tải xuống</button>
+</head>
+<body>
+    <button id="shareBtn">Share via Facebook App</button>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script>
-        function isWebView() {
-        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-        return userAgent.includes("FB") || userAgent.includes("Zalo") || userAgent.includes("Line");
-    }
-            document.getElementById("capture-btn").addEventListener("click", function () {
-            const targetDiv = document.getElementById("capture-div");
+    <script>
+        $(document).ready(function () {
+            $('#shareBtn').click(function () {
+                // URL bạn muốn chia sẻ
+                const shareUrl = encodeURIComponent('https://example.com');
+                
+                // URL Scheme mở app Facebook
+                const fbAppUrl = `fb://facewebmodal/f?href=${shareUrl}`;
 
-            html2canvas(targetDiv).then((canvas) => {
-                canvas.toBlob((blob) => {
-                    const blobUrl = URL.createObjectURL(blob);
-
-                    if (isWebView()) {
-                        // Hiển thị thông báo hoặc tự động mở ảnh trong trình duyệt
-                        const confirmation = confirm(
-                            "Trình duyệt hiện tại không hỗ trợ tải xuống. Bạn có muốn mở trình duyệt mặc định để tải ảnh không?"
-                        );
-                        if (confirmation) {
-                            window.location.href = blobUrl; // Mở URL trong trình duyệt mặc định
-                        }
-                    } else {
-                        // Tải ảnh trực tiếp trong trình duyệt thông thường
-                        const link = document.createElement("a");
-                        link.href = blobUrl;
-                        link.download = "screenshot.png";
-                        link.click();
-                    }
-                }, "image/png");
-            }).catch(err => {
-                alert("Không thể chụp ảnh trên trình duyệt này!");
-                console.error(err);
+                // Kiểm tra nếu app Facebook không mở được thì fallback về web
+                window.location.href = fbAppUrl;
             });
         });
-  </script>
+    </script>
+</body>
 </html>
