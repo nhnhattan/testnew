@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Upload Base64 Image</title>
+  </head>
+  <body>
+    <h2>Chọn ảnh để upload</h2>
+    <input type="file" id="imageInput" accept="image/*" />
+    <button id="uploadBtn">Upload</button>
+
+    <script>
+            const imageInput = document.getElementById('imageInput');
+            const uploadBtn = document.getElementById('uploadBtn');
+
+            uploadBtn.addEventListener('click', () => {
+              const file = imageInput.files[0];
+              if (!file) {
+                alert('Vui lòng chọn một hình ảnh!');
+                return;
+              }
+
+              const reader = new FileReader();
+              reader.onload = function (e) {
+                const base64Image = e.target.result;
+
+                new Promise((resolve, reject) => {
+        const file = document.getElementById("imageInput").files[0]; // input type="file" có id="imageInput"
+        if (!file) {
+          alert("Chọn hình trước đã");
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const base64Image = e.target.result;
+
+          // ✅ Bỏ tiền tố "data:image/png;base64," hoặc tương tự
+          const cleanedBase64 = base64Image.replace(/^data:image\/\w+;base64,/, "");
+
+          const formImg = new FormData();
+          formImg.append("Procedure", "Upload_Avatar");
+          formImg.append("Parameters", cleanedBase64);
+          console.log(cleanedBase64)
+
+          const bearerToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJBZHZEaWdpdGFsX1Rva2VuIiwianRpIjoiYjE5ZmZiMTMtM2RlZS00NjllLThjM2EtMDNkMTQ2Mzg3NDUxIiwiaWF0IjoiNS8xNi8yMDI1IDEwOjQ2OjM3IEFNIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQ3VzdG9tZXIiLCJDdXN0b21lcklkIjoiMjMyOSIsIkN1c3RvbWVyR3JvdXBJZCI6Ii0xIiwiQ3VzdG9tZXJOYW1lIjoidGVzdG5ldzMiLCJDdXN0b21lckVtYWlsIjoidGVzdEBnbWFpbC5jb20iLCJDdXN0b21lclBob25lMSI6IjAxMjIzNDU2Nzg5IiwiQ3VzdG9tZXJDb2RlIjoiMzVCNjAwMUQtMzU5NS00MTM2LTkwQTItQzhFMjRBNjRDMkEzIiwiZXhwIjoxNzQ3NDUzNTk3LCJpc3MiOiJBZHYuRGlnaXRhbCIsImF1ZCI6IkFkdkRpZ2l0YWxfQ2xpZW50In0.itNETeiSgJZbFpTHdWkwv9E9fgtvcki9G-pB62H2XQc"; // <-- token thật
+
+          fetch("https://game.advietnam.vn/app/api/sql/Authorized_Return_Json", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${bearerToken}`,
+              // ❌ KHÔNG set Content-Type, để trình duyệt tự xử lý form-data
+            },
+            body: formImg,
+          })
+            .then((response) => {
+              if (!response.ok) throw new Error("Upload failed");
+              return response.text(); // server trả về text chứ không phải JSON?
+            })
+            .then((data) => {
+              const parsed = JSON.parse(data);
+              const filename = parsed.Objects?.[0]?.ResponseData;
+              if (filename) {
+                console.log(`✅ Ảnh đã upload: https://game.advietnam.vn/avatars/${filename}`);
+                resolve(filename);
+              } else {
+                reject("Không có filename trong response");
+              }
+            })
+            .catch((err) => {
+              console.error("❌ Upload lỗi:", err);
+              reject(err);
+            });
+        };
+
+        reader.readAsDataURL(file); // đọc ra base64
+      });
+              };
+
+              // Đọc file dưới dạng DataURL (Base64)
+              reader.readAsDataURL(file);
+            });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucky Wheel with Images</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.4/TweenMax.min.js"></script>
+    <script src="./javascript-winwheel-2.8.0/Winwheel.min.js"></script>
+</head>
+<body>
+    <canvas id="canvas" width="500" height="500"></canvas>
+    <button id="spin">Spin!</button>
+
+    <script>
+        // Đường dẫn đến hình ảnh phần quà
+        const prizes = [
+            "https://via.placeholder.com/100x100?text=Gift+1",  // Hình ảnh mẫu
+            "https://via.placeholder.com/100x100?text=Gift+2",  // Hình ảnh mẫu
+            "https://via.placeholder.com/100x100?text=Gift+3",  // Hình ảnh mẫu
+            "https://via.placeholder.com/100x100?text=Gift+4",  // Hình ảnh mẫu
+            "https://via.placeholder.com/100x100?text=Gift+5",  // Hình ảnh mẫu
+            "https://via.placeholder.com/100x100?text=Gift+6"   // Hình ảnh mẫu
+        ];
+
+        // Tạo mảng hình ảnh từ URL
+        const images = [];
+        prizes.forEach(src => {
+            const img = new Image();
+            img.src = src;
+            images.push(img);
+        });
+
+        // Hàm kiểm tra nếu tất cả hình ảnh đã được tải
+        function checkImagesLoaded() {
+            let loaded = true;
+            images.forEach(img => {
+                if (!img.complete) {
+                    loaded = false;
+                }
+            });
+            return loaded;
+        }
+
+        // Đợi cho hình ảnh tải xong trước khi tạo vòng quay
+        function createWheel() {
+            if (checkImagesLoaded()) {
+                const theWheel = new Winwheel({
+                    'canvasId': 'canvas',
+                    'numSegments': prizes.length,
+                    'outerRadius': 200,
+                    'segments': prizes.map((_, index) => ({
+                        'image': images[index],  // Sử dụng hình ảnh đã tải
+                        'fillStyle': '#FF5733'
+                    })),
+                    'animation': {
+                        'type': 'spinToStop',
+                        'duration': 5,
+                        'spins': 8
+                    }
+                });
+
+                // Bắt đầu quay vòng khi nhấn nút
+                document.getElementById('spin').addEventListener('click', () => {
+                    theWheel.startAnimation();
+                });
+            } else {
+                setTimeout(createWheel, 100);  // Thử lại nếu hình ảnh chưa tải xong
+            }
+        }
+
+        // Gọi hàm kiểm tra và tạo vòng quay
+        createWheel();
+    </script>
+</body>
+</html>

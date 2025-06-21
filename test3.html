@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fashion Designer Selection</title>
+    <!-- Splide CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css"
+    />
+    <!-- Font Awesome for icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    max-width: 800px;
+                    margin: 0 auto;
+                    padding: 20px;
+                }
+
+                .step {
+                    margin-bottom: 30px;
+                    padding: 20px;
+                    border: 1px solid #ddd;
+                    border-radius: 8px;
+                    display: none;
+                }
+
+                .step.active {
+                    display: block;
+                }
+
+                .step-title {
+                    font-size: 1.2em;
+                    margin-bottom: 15px;
+                    font-weight: bold;
+                }
+
+                .selection-container {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 20px;
+                }
+
+                .selection-group {
+                    margin-bottom: 15px;
+                }
+
+                .selection-group-title {
+                    font-size: 1.1em;
+                    margin-bottom: 10px;
+                    color: #555;
+                }
+
+                .option-buttons {
+                    display: flex;
+                    gap: 15px;
+                }
+
+                .option-btn {
+                    padding: 10px 20px;
+                    border: 2px solid #ddd;
+                    border-radius: 5px;
+                    background: white;
+                    cursor: pointer;
+                    font-size: 1em;
+                    transition: all 0.3s;
+                    flex: 1;
+                }
+
+                .option-btn.selected {
+                    border-color: #4CAF50;
+                    background-color: #e8f5e9;
+                }
+
+                .option-btn:not(.selected) {
+                    opacity: 0.6;
+                }
+
+                /* Slider styles with icons */
+            .slider-container {
+          margin: 30px 0;
+          position: relative;
+          padding: 0 30px; /* Thêm padding để tạo không gian cho các icon */
+      }
+
+                  .slider-wrapper {
+    position: relative;
+    height: 40px;
+    display: flex;
+    align-items: center;
+}
+
+                  .slider {
+    width: 100%;
+    height: 10px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: linear-gradient(to right, #4CAF50, #E91E63);
+    outline: none;
+    border-radius: 5px;
+    margin: 0;
+    z-index: 3; /* Đảm bảo slider nằm trên cùng */
+    position: relative;
+}
+
+                  /* Thumb style */
+                  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid #555;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    z-index: 4; /* Thumb nằm trên cùng */
+    transition: transform 0.2s;
+}   
+
+                  .slider::-webkit-slider-thumb:hover {
+                      transform: scale(1.1);
+                  }
+
+                  /* Edge icons that will be covered by thumb */
+                  .slider-edge-icon {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 30px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    z-index: 2; /* Các icon nằm dưới slider nhưng trên background */
+}
+
+                  .slider-edge-icon.left {
+    left: 0;
+    color: #4CAF50;
+}
+
+.slider-edge-icon.right {
+    right: 0;
+    color: #E91E63;
+}
+
+                  /* Slider track marks */
+                  .slider-marks {
+                      position: absolute;
+                      top: 25px;
+                      left: 15px;
+                      right: 15px;
+                      display: flex;
+                      justify-content: space-between;
+                  }
+
+                  .slider-mark {
+                      position: relative;
+                      width: 1px;
+                      height: 10px;
+                      background: rgba(0,0,0,0.2);
+                  }
+
+                  .slider-mark.center {
+                      height: 15px;
+                      top: -5px;
+                      background: #555;
+                  }
+
+                  .slider-mark::after {
+                      content: attr(data-value);
+                      position: absolute;
+                      top: 15px;
+                      left: 50%;
+                      transform: translateX(-50%);
+                      font-size: 12px;
+                      color: #555;
+                  }
+
+                  .slider-value-container {
+                      text-align: center;
+                      margin: 25px 0 15px;
+                  }
+
+                  .slider-value {
+                      display: inline-block;
+                      padding: 8px 20px;
+                      background: #f5f5f5;
+                      border-radius: 20px;
+                      font-weight: bold;
+                      font-size: 1.1em;
+                      min-width: 50px;
+                      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                  }
+
+                  .body-type-label {
+                      text-align: center;
+                      margin-top: 5px;
+                      font-weight: bold;
+                      font-size: 1.1em;
+                  }
+
+                  .body-type-label.slim {
+                      color: #4CAF50;
+                  }
+
+                  .body-type-label.curvy {
+                      color: #E91E63;
+                  }
+
+                /* Designer carousel */
+                .designer-carousel {
+                    position: relative;
+                    margin: 20px auto;
+                    width: 100%;
+                    max-width: 600px;
+                }
+
+                .designer-display {
+                    text-align: center;
+                    padding: 20px;
+                    border: 1px solid #eee;
+                    border-radius: 8px;
+                }
+
+                .designer-img {
+                    width: 200px;
+                    height: 200px;
+                    object-fit: cover;
+                    border-radius: 50%;
+                    margin-bottom: 10px;
+                }
+
+                .carousel-nav {
+                    position: absolute;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    width: 100%;
+                    display: flex;
+                    justify-content: space-between;
+                }
+
+                .carousel-btn {
+                    background: rgba(0,0,0,0.5);
+                    color: white;
+                    border: none;
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 50%;
+                    cursor: pointer;
+                    font-size: 1.2em;
+                }
+
+                /* Navigation buttons */
+                .nav-buttons {
+                    display: flex;
+                    justify-content: space-between;
+                    margin-top: 20px;
+                }
+
+                .back-btn {
+                    padding: 12px 24px;
+                    background: #f5f5f5;
+                    color: #555;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                    font-size: 1em;
+                    cursor: pointer;
+                    display: none;
+                }
+
+                .next-btn {
+                    padding: 12px 24px;
+                    background: #4CAF50;
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                    font-size: 1em;
+                    cursor: pointer;
+                }
+
+                .next-btn:disabled {
+                    background: #ccc;
+                    cursor: not-allowed;
+                }
+
+                /* Final results */
+                .final-results {
+                    margin-top: 30px;
+                    text-align: center;
+                    display: none;
+                }
+
+                .final-btn {
+                    padding: 12px 24px;
+                    background: #4CAF50;
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                    font-size: 1em;
+                    cursor: pointer;
+                }
+
+                /* Splide custom styles */
+                .splide__slide {
+                    text-align: center;
+                    padding: 0 10px;
+                }
+
+                .splide__slide img {
+                    width: 100%;
+                    height: 150px;
+                    object-fit: cover;
+                    border-radius: 8px;
+                    border: 3px solid transparent;
+                    cursor: pointer;
+                    transition: all 0.3s;
+                }
+
+                .splide__slide img.selected {
+                    border-color: red;
+                    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+                }
+
+                .splide__arrows {
+                    display: flex;
+                    justify-content: center;
+                    gap: 20px;
+                    margin-top: 15px;
+                }
+
+                .splide__arrow {
+                    background: #4CAF50;
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                    padding: 8px 20px;
+                    cursor: pointer;
+                }
+
+                .splide__arrow:disabled {
+                    background: #ccc;
+                    cursor: not-allowed;
+                }
+    </style>
+  </head>
+  <body>
+    <h1>Fashion Designer Selection</h1>
+
+    <div class="step active" id="step1">
+      <div class="step-title">Make Your Selection</div>
+      <div class="selection-container">
+        <!-- Gender Selection -->
+        <div class="selection-group">
+          <div class="selection-group-title">1. Select Gender</div>
+          <div class="option-buttons">
+            <button class="option-btn" data-value="male">Male</button>
+            <button class="option-btn" data-value="female">Female</button>
+          </div>
+        </div>
+
+        <!-- Body Type Slider with icons -->
+        <div class="selection-group">
+          <div class="selection-group-title">2. Select Body Type</div>
+          <div class="slider-container">
+            <div class="slider-wrapper">
+              <!-- Edge icons that will be covered at min/max -->
+              <div class="slider-edge-icon left">
+                <i class="fas fa-male"></i>
+              </div>
+              <div class="slider-edge-icon right">
+                <i class="fas fa-male"></i>
+              </div>
+
+              <!-- Main slider -->
+              <input
+                type="range"
+                min="0"
+                max="8"
+                value="4"
+                class="slider"
+                id="body-type-slider"
+              />
+
+              <!-- Slider marks -->
+              <div class="slider-marks">
+                <div class="slider-mark" data-value="1"></div>
+                <div class="slider-mark" data-value="2"></div>
+                <div class="slider-mark" data-value="3"></div>
+                <div class="slider-mark" data-value="4"></div>
+                <div class="slider-mark center" data-value="5"></div>
+                <div class="slider-mark" data-value="6"></div>
+                <div class="slider-mark" data-value="7"></div>
+                <div class="slider-mark" data-value="8"></div>
+                <div class="slider-mark" data-value="9"></div>
+              </div>
+            </div>
+            <div class="slider-value-container">
+              <span class="slider-value" id="slider-value">5</span>
+            </div>
+            <div class="body-type-label" id="body-type-label">Medium</div>
+          </div>
+        </div>
+        <!-- Designer Selection -->
+        <div class="selection-group">
+          <div class="selection-group-title">3. Select Designer</div>
+          <div class="designer-carousel">
+            <div class="designer-display">
+              <img
+                class="designer-img"
+                id="designer-image"
+                src=""
+                alt="Designer"
+              />
+              <h3 id="designer-name">Select gender first</h3>
+            </div>
+            <div class="carousel-nav">
+              <button class="carousel-btn" id="prev-designer">&lt;</button>
+              <button class="carousel-btn" id="next-designer">&gt;</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" id="step2">
+      <div class="step-title">Select Your Favorite Design</div>
+      <div class="splide" id="designs-carousel">
+        <div class="splide__track">
+          <div class="splide__list" id="designs-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="back-btn" id="back-btn">
+        <i class="fas fa-arrow-left"></i> Back
+      </button>
+      <button class="next-btn" id="next-btn" disabled>
+        Show Designs <i class="fas fa-arrow-right"></i>
+      </button>
+    </div>
+
+    <div class="final-results" id="final-results">
+      <button class="final-btn" id="show-results-btn">
+        <i class="fas fa-list"></i> Show Final Selection in Console
+      </button>
+    </div>
+
+    <!-- Splide JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+    <script>
+      // Data
+      const designers = [
+          { id: 1, name: "Giorgio Armani", image: "https://via.placeholder.com/200?text=Giorgio+Armani", gender: "male", style: ["slim", "curvy"] },
+          { id: 2, name: "Coco Chanel", image: "https://via.placeholder.com/200?text=Coco+Chanel", gender: "female", style: ["slim"] },
+          { id: 3, name: "Tom Ford", image: "https://via.placeholder.com/200?text=Tom+Ford", gender: "male", style: ["slim"] },
+          { id: 4, name: "Donatella Versace", image: "https://via.placeholder.com/200?text=Donatella+Versace", gender: "female", style: ["curvy"] },
+          { id: 5, name: "Ralph Lauren", image: "https://via.placeholder.com/200?text=Ralph+Lauren", gender: "male", style: ["slim", "curvy"] },
+          { id: 6, name: "Vera Wang", image: "https://via.placeholder.com/200?text=Vera+Wang", gender: "female", style: ["slim", "curvy"] }
+      ];
+
+      const designImages = {
+          male: {
+              slim: [
+                  { id: 1, url: "https://via.placeholder.com/400x600/FF5733/FFFFFF?text=Male+Slim+1" },
+                  { id: 2, url: "https://via.placeholder.com/400x600/C70039/FFFFFF?text=Male+Slim+2" },
+                  { id: 3, url: "https://via.placeholder.com/400x600/900C3F/FFFFFF?text=Male+Slim+3" },
+                  { id: 4, url: "https://via.placeholder.com/400x600/581845/FFFFFF?text=Male+Slim+4" },
+                  { id: 5, url: "https://via.placeholder.com/400x600/1A5276/FFFFFF?text=Male+Slim+5" }
+              ],
+              curvy: [
+                  { id: 6, url: "https://via.placeholder.com/400x600/3498DB/FFFFFF?text=Male+Curvy+1" },
+                  { id: 7, url: "https://via.placeholder.com/400x600/2980B9/FFFFFF?text=Male+Curvy+2" },
+                  { id: 8, url: "https://via.placeholder.com/400x600/154360/FFFFFF?text=Male+Curvy+3" }
+              ]
+          },
+          female: {
+              slim: [
+                  { id: 9, url: "https://via.placeholder.com/400x600/F39C12/FFFFFF?text=Female+Slim+1" },
+                  { id: 10, url: "https://via.placeholder.com/400x600/E67E22/FFFFFF?text=Female+Slim+2" },
+                  { id: 11, url: "https://via.placeholder.com/400x600/D35400/FFFFFF?text=Female+Slim+3" },
+                  { id: 12, url: "https://via.placeholder.com/400x600/BA4A00/FFFFFF?text=Female+Slim+4" }
+              ],
+              curvy: [
+                  { id: 13, url: "https://via.placeholder.com/400x600/27AE60/FFFFFF?text=Female+Curvy+1" },
+                  { id: 14, url: "https://via.placeholder.com/400x600/229954/FFFFFF?text=Female+Curvy+2" },
+                  { id: 15, url: "https://via.placeholder.com/400x600/1E8449/FFFFFF?text=Female+Curvy+3" },
+                  { id: 16, url: "https://via.placeholder.com/400x600/196F3D/FFFFFF?text=Female+Curvy+4" },
+                  { id: 17, url: "https://via.placeholder.com/400x600/145A32/FFFFFF?text=Female+Curvy+5" }
+              ]
+          }
+      };
+
+      // App state
+      const state = {
+          currentStep: 1,
+          gender: null,
+          bodyType: null,
+          bodyTypeValue: 5,
+          designer: null,
+          filteredDesigners: [],
+          currentDesignerIndex: 0,
+          designs: [],
+          selectedDesign: null,
+          splide: null
+      };
+
+      // DOM elements
+      const steps = document.querySelectorAll('.step');
+      const genderButtons = document.querySelectorAll('#step1 .option-btn');
+      const bodyTypeSlider = document.getElementById('body-type-slider');
+      const sliderValue = document.getElementById('slider-value');
+      const bodyTypeLabel = document.getElementById('body-type-label');
+      const designerImage = document.getElementById('designer-image');
+      const designerName = document.getElementById('designer-name');
+      const prevDesignerBtn = document.getElementById('prev-designer');
+      const nextDesignerBtn = document.getElementById('next-designer');
+      const designsList = document.getElementById('designs-list');
+      const backBtn = document.getElementById('back-btn');
+      const nextBtn = document.getElementById('next-btn');
+      const finalResultsSection = document.getElementById('final-results');
+      const showResultsBtn = document.getElementById('show-results-btn');
+
+      // Initialize
+      updateBodyTypeLabel();
+
+      // Event listeners
+      genderButtons.forEach(btn => {
+          btn.addEventListener('click', () => {
+              genderButtons.forEach(b => b.classList.remove('selected'));
+              btn.classList.add('selected');
+              state.gender = btn.dataset.value;
+              filterDesigners();
+              updateDesignerDisplay();
+              updateNextButton();
+          });
+      });
+
+      bodyTypeSlider.addEventListener('input', (e) => {
+          state.bodyTypeValue = parseInt(e.target.value);
+          sliderValue.textContent = state.bodyTypeValue;
+          updateBodyTypeLabel();
+          filterDesigners();
+          updateDesignerDisplay();
+          updateNextButton();
+      });
+
+      prevDesignerBtn.addEventListener('click', showPreviousDesigner);
+      nextDesignerBtn.addEventListener('click', showNextDesigner);
+      backBtn.addEventListener('click', goBack);
+      nextBtn.addEventListener('click', goToNextStep);
+      showResultsBtn.addEventListener('click', showFinalResults);
+
+      // Functions
+      function updateBodyTypeLabel() {
+            // Chuyển đổi giá trị slider (0-8) thành (1-9)
+            const actualValue = state.bodyTypeValue + 1;
+            sliderValue.textContent = actualValue;
+
+            if (actualValue <= 5) { // 1-5 là Slim
+                state.bodyType = "slim";
+                bodyTypeLabel.textContent = actualValue === 5 ? "Medium" : "Slim";
+                bodyTypeLabel.className = "body-type-label slim";
+            } else { // 6-9 là Curvy
+                state.bodyType = "curvy";
+                bodyTypeLabel.textContent = "Curvy";
+                bodyTypeLabel.className = "body-type-label curvy";
+            }
+
+            // Thêm hiệu ứng khi ở min/max
+            const leftIcon = document.querySelector('.slider-edge-icon.left');
+            const rightIcon = document.querySelector('.slider-edge-icon.right');
+
+            if (state.bodyTypeValue === 0) {
+                leftIcon.style.transform = 'translateY(-50%) scale(0.8)';
+                leftIcon.style.opacity = '0.7';
+            } else {
+                leftIcon.style.transform = 'translateY(-50%)';
+                leftIcon.style.opacity = '1';
+            }
+
+            if (state.bodyTypeValue === 8) {
+                rightIcon.style.transform = 'translateY(-50%) scale(0.8)';
+                rightIcon.style.opacity = '0.7';
+            } else {
+                rightIcon.style.transform = 'translateY(-50%)';
+                rightIcon.style.opacity = '1';
+            }
+        }
+
+        // Cập nhật event listener cho slider
+        bodyTypeSlider.addEventListener('input', (e) => {
+            state.bodyTypeValue = parseInt(e.target.value);
+            updateBodyTypeLabel();
+            filterDesigners();
+            updateDesignerDisplay();
+            updateNextButton();
+        });
+
+
+      function updateNextButton() {
+          if (state.gender && state.designer) {
+              nextBtn.disabled = false;
+          } else {
+              nextBtn.disabled = true;
+          }
+      }
+
+      function goBack() {
+          if (state.currentStep <= 1) return;
+
+          steps[state.currentStep - 1].classList.remove('active');
+          state.currentStep--;
+          steps[state.currentStep - 1].classList.add('active');
+
+          // Show/hide back button
+          backBtn.style.display = state.currentStep > 1 ? 'block' : 'none';
+
+          // Change next button text
+          nextBtn.innerHTML = state.currentStep === 1 ? 'Show Designs <i class="fas fa-arrow-right"></i>' : 'Next Step <i class="fas fa-arrow-right"></i>';
+      }
+
+      function goToNextStep() {
+          if (state.currentStep >= steps.length) return;
+
+          steps[state.currentStep - 1].classList.remove('active');
+          state.currentStep++;
+          steps[state.currentStep - 1].classList.add('active');
+
+          // Show back button
+          backBtn.style.display = 'block';
+
+          if (state.currentStep === 2) {
+              loadDesigns();
+              nextBtn.style.display = 'none';
+          }
+      }
+
+      function filterDesigners() {
+          if (state.gender && state.bodyType) {
+              state.filteredDesigners = designers.filter(designer =>
+                  designer.gender === state.gender &&
+                  designer.style.includes(state.bodyType)
+              );
+
+              if (state.filteredDesigners.length > 0) {
+                  state.currentDesignerIndex = 0;
+              } else {
+                  state.currentDesignerIndex = -1;
+              }
+          }
+      }
+
+      function updateDesignerDisplay() {
+          if (state.filteredDesigners.length > 0 && state.currentDesignerIndex >= 0) {
+              const designer = state.filteredDesigners[state.currentDesignerIndex];
+              designerImage.src = designer.image;
+              designerName.textContent = designer.name;
+              state.designer = designer;
+
+              // Enable navigation buttons
+              prevDesignerBtn.disabled = false;
+              nextDesignerBtn.disabled = false;
+          } else {
+              designerImage.src = "";
+              designerName.textContent = state.gender ? "No designers available for this selection" : "Select gender first";
+              state.designer = null;
+
+              // Disable navigation buttons
+              prevDesignerBtn.disabled = true;
+              nextDesignerBtn.disabled = true;
+          }
+
+          updateNextButton();
+      }
+
+      function showPreviousDesigner() {
+          if (state.filteredDesigners.length === 0) return;
+
+          state.currentDesignerIndex--;
+          if (state.currentDesignerIndex < 0) {
+              state.currentDesignerIndex = state.filteredDesigners.length - 1;
+          }
+          updateDesignerDisplay();
+      }
+
+      function showNextDesigner() {
+          if (state.filteredDesigners.length === 0) return;
+
+          state.currentDesignerIndex++;
+          if (state.currentDesignerIndex >= state.filteredDesigners.length) {
+              state.currentDesignerIndex = 0;
+          }
+          updateDesignerDisplay();
+      }
+
+      function loadDesigns() {
+          if (!state.gender || !state.bodyType) return;
+
+          state.designs = designImages[state.gender][state.bodyType];
+          state.selectedDesign = null;
+          renderDesignSlides();
+          initSplide();
+      }
+
+      function renderDesignSlides() {
+          designsList.innerHTML = '';
+
+          state.designs.forEach((design, index) => {
+              const slide = document.createElement('li');
+              slide.className = 'splide__slide';
+
+              const img = document.createElement('img');
+              img.src = design.url;
+              img.alt = 'Fashion design';
+              img.dataset.index = index;
+
+              if (state.selectedDesign && state.selectedDesign.id === design.id) {
+                  img.classList.add('selected');
+              }
+
+              img.addEventListener('click', (e) => {
+                  // Remove selection from all designs
+                  document.querySelectorAll('.splide__slide img').forEach(img => {
+                      img.classList.remove('selected');
+                  });
+
+                  // Select clicked design
+                  e.target.classList.add('selected');
+                  const selectedIndex = parseInt(e.target.dataset.index);
+                  state.selectedDesign = state.designs[selectedIndex];
+
+                  // Show final results section
+                  finalResultsSection.style.display = 'block';
+              });
+
+              slide.appendChild(img);
+              designsList.appendChild(slide);
+          });
+      }
+
+      function initSplide() {
+          if (state.splide) {
+              state.splide.destroy();
+          }
+
+          state.splide = new Splide('#designs-carousel', {
+              type: 'slide',
+              perPage: 3,
+              perMove: 1,
+              gap: '15px',
+              pagination: false,
+              arrows: true,
+              breakpoints: {
+                  768: {
+                      perPage: 2,
+                  },
+                  480: {
+                      perPage: 1,
+                  }
+              }
+          }).mount();
+      }
+
+      function showFinalResults() {
+          if (!state.gender || !state.bodyType || !state.designer || !state.selectedDesign) {
+              alert('Please complete all selections first');
+              return;
+          }
+
+          const selections = {
+              gender: state.gender,
+              bodyType: state.bodyType,
+              bodyTypeValue: state.bodyTypeValue,
+              designer: {
+                  id: state.designer.id,
+                  name: state.designer.name
+              },
+              selectedDesign: state.selectedDesign
+          };
+
+          console.log('Final Selections:', selections);
+          alert('Check the browser console for your selections!');
+      }
+    </script>
+  </body>
+</html>

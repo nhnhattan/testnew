@@ -1,74 +1,485 @@
-<!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chụp và Mở Ảnh</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ví dụ Carousel theo lựa chọn</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@glidejs/glide/dist/css/glide.core.min.css">
     <style>
-      #capture-div {
-        width: 300px;
-        height: 200px;
-        background: lightblue;
-        text-align: center;
-        line-height: 200px;
-        font-size: 20px;
-      }
-      button {
-        margin-top: 20px;
-        padding: 10px 20px;
-        font-size: 16px;
-      }
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        h2 {
+            margin-top: 0;
+        }
+        .option-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        button {
+            padding: 8px 15px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button.selected {
+            background-color: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+        .designer-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .designer-option {
+            width: 120px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .designer-option img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid transparent;
+        }
+        .designer-option.selected img {
+            border-color: #4CAF50;
+        }
+        .result {
+            display: none;
+            margin-top: 30px;
+            position: relative;
+        }
+        .glide {
+            position: relative;
+        }
+        .glide__slide {
+            padding: 5px;
+        }
+        .glide__slide img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border: 3px solid transparent;
+            border-radius: 5px;
+            transition: border-color 0.3s;
+        }
+        .glide__slide.selected img {
+            border-color: red;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+        }
+        .glide__arrows {
+            position: absolute;
+            width: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            justify-content: space-between;
+            pointer-events: none;
+        }
+        .glide__arrow {
+            pointer-events: all;
+            background: rgba(255, 255, 255, 0.7);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+        .glide__arrow:hover {
+            background: white;
+        }
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+            display: none;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4CAF50;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .complete-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: none;
+        }
+        .complete-btn:hover {
+            background-color: #45a049;
+        }
+        .glide__slide {
+            padding: 5px;
+            cursor: pointer;
+        }
+        .glide__slide img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border: 3px solid transparent;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        .glide__slide.active img {
+            outline: 3px solid red;
+        }
     </style>
-  </head>
-  <body>
-    <div id="capture-div">Đây là nội dung cần chụp</div>
-    <button id="capture-btn">Chụp và Mở Hình</button>
+</head>
+<body>
+    <div class="section">
+        <h2>1. Chọn giới tính</h2>
+        <div class="option-group">
+            <button class="gender-option" data-value="male">Nam</button>
+            <button class="gender-option" data-value="female">Nữ</button>
+        </div>
+    </div>
 
+    <div class="section">
+        <h2>2. Chọn thể trạng</h2>
+        <div class="option-group">
+            <button class="body-option" data-value="thin">Gầy</button>
+            <button class="body-option" data-value="fat">Béo</button>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>3. Chọn nhà thiết kế</h2>
+        <div class="designer-options">
+            <div class="designer-option" data-value="designer1">
+                <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="Designer 1">
+                <p>Nguyễn Văn A</p>
+            </div>
+            <div class="designer-option" data-value="designer2">
+                <img src="https://randomuser.me/api/portraits/women/1.jpg" alt="Designer 2">
+                <p>Trần Thị B</p>
+            </div>
+            <div class="designer-option" data-value="designer3">
+                <img src="https://randomuser.me/api/portraits/men/2.jpg" alt="Designer 3">
+                <p>Lê Văn C</p>
+            </div>
+            <div class="designer-option" data-value="designer4">
+                <img src="https://randomuser.me/api/portraits/women/2.jpg" alt="Designer 4">
+                <p>Phạm Thị D</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="result" id="result">
+        <h2>Kết quả phù hợp với bạn</h2>
+        <div class="glide">
+            <div class="loading-overlay" id="loading">
+                <div class="spinner"></div>
+            </div>
+            <div class="glide__track" data-glide-el="track">
+                <ul class="glide__slides" id="slides-container">
+                    <!-- Slides will be added here by JavaScript -->
+                </ul>
+            </div>
+            <div class="glide__arrows" data-glide-el="controls">
+                <button class="glide__arrow glide__arrow--left" data-glide-dir="<">←</button>
+                <button class="glide__arrow glide__arrow--right" data-glide-dir=">">→</button>
+            </div>
+        </div>
+        <button class="complete-btn" id="completeBtn">Hoàn thành</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@glidejs/glide"></script>
     <script>
-      // Kiểm tra xem có phải WebView hay không (Facebook, Zalo, v.v.)
-      function isWebView() {
-        const userAgent =
-          navigator.userAgent || navigator.vendor || window.opera;
-        return (
-          userAgent.includes("FB") ||
-          userAgent.includes("Zalo") ||
-          userAgent.includes("Line")
-        );
-      }
+        // Dữ liệu hình ảnh theo các lựa chọn
+        const imageData = {
+            male: {
+                thin: {
+                    designer1: [
+                        {url: "https://pbs.twimg.com/profile_images/1701878932176351232/AlNU3WTK_400x400.jpg", name: "Phong cách trẻ trung"},
+                        {url: "https://pbs.twimg.com/profile_images/1701878932176351232/AlNU3WTK_400x400.jpg", name: "Phong cách công sở"},
+                        {url: "https://pbs.twimg.com/profile_images/1701878932176351232/AlNU3WTK_400x400.jpg", name: "Phong cách dạo phố"}
+                    ],
+                    designer2: [
+                        {url: "https://source.unsplash.com/random/600x600/?male,thin,women-designer1", name: "Phong cách thanh lịch"},
+                        {url: "https://source.unsplash.com/random/600x600/?male,thin,women-designer2", name: "Phong cách thể thao"},
+                        {url: "https://source.unsplash.com/random/600x600/?male,thin,women-designer3", name: "Phong cách tiệc tùng"}
+                    ],
+                    designer3: [
+                        {url: "https://source.unsplash.com/random/600x600/?male,thin,designer3-1", name: "Phong cách cổ điển"},
+                        {url: "https://source.unsplash.com/random/600x600/?male,thin,designer3-2", name: "Phong cách hiện đại"},
+                        {url: "https://source.unsplash.com/random/600x600/?male,thin,designer3-3", name: "Phong cách đường phố"}
+                    ],
+                    designer4: [
+                        {url: "https://source.unsplash.com/random/600x600/?male,thin,women-designer4-1", name: "Phong cách tối giản"},
+                        {url: "https://source.unsplash.com/random/600x600/?male,thin,women-designer4-2", name: "Phong cách sang trọng"},
+                        {url: "https://source.unsplash.com/random/600x600/?male,thin,women-designer4-3", name: "Phong cách nghệ thuật"}
+                    ]
+                },
+                fat: {
+                    designer1: [
+                        {url: "https://source.unsplash.com/random/600x600/?male,fat,design1", name: "Phong cách thoải mái"},
+                        {url: "https://source.unsplash.com/random/600x600/?male,fat,design2", name: "Phong cách công sở"},
+                        {url: "https://source.unsplash.com/random/600x600/?male,fat,design3", name: "Phong cách dạo phố"}
+                    ],
+                    designer2: [
+                        {url: "https://source.unsplash.com/random/600x600/?male,fat,women-designer1", name: "Phong cách thanh lịch"},
+                        {url: "https://source.unsplash.com/random/600x600/?male,fat,women-designer2", name: "Phong cách thể thao"},
+                        {url: "https://source.unsplash.com/random/600x600/?male,fat,women-designer3", name: "Phong cách tiệc tùng"}
+                    ],
+                    designer3: [
+                        {url: "https://source.unsplash.com/random/600x600/?male,fat,designer3-1", name: "Phong cách cổ điển"},
+                        {url: "https://source.unsplash.com/random/600x600/?male,fat,designer3-2", name: "Phong cách hiện đại"},
+                        {url: "https://source.unsplash.com/random/600x600/?male,fat,designer3-3", name: "Phong cách đường phố"}
+                    ],
+                    designer4: [
+                        {url: "https://source.unsplash.com/random/600x600/?male,fat,women-designer4-1", name: "Phong cách tối giản"},
+                        {url: "https://source.unsplash.com/random/600x600/?male,fat,women-designer4-2", name: "Phong cách sang trọng"},
+                        {url: "https://source.unsplash.com/random/600x600/?male,fat,women-designer4-3", name: "Phong cách nghệ thuật"}
+                    ]
+                }
+            },
+            female: {
+                thin: {
+                    designer1: [
+                        {url: "https://source.unsplash.com/random/600x600/?female,thin,design1", name: "Phong cách trẻ trung"},
+                        {url: "https://source.unsplash.com/random/600x600/?female,thin,design2", name: "Phong cách công sở"},
+                        {url: "https://source.unsplash.com/random/600x600/?female,thin,design3", name: "Phong cách dạo phố"}
+                    ],
+                    designer2: [
+                        {url: "https://source.unsplash.com/random/600x600/?female,thin,women-designer1", name: "Phong cách thanh lịch"},
+                        {url: "https://source.unsplash.com/random/600x600/?female,thin,women-designer2", name: "Phong cách thể thao"},
+                        {url: "https://source.unsplash.com/random/600x600/?female,thin,women-designer3", name: "Phong cách tiệc tùng"}
+                    ],
+                    designer3: [
+                        {url: "https://source.unsplash.com/random/600x600/?female,thin,designer3-1", name: "Phong cách cổ điển"},
+                        {url: "https://source.unsplash.com/random/600x600/?female,thin,designer3-2", name: "Phong cách hiện đại"},
+                        {url: "https://source.unsplash.com/random/600x600/?female,thin,designer3-3", name: "Phong cách đường phố"}
+                    ],
+                    designer4: [
+                        {url: "https://source.unsplash.com/random/600x600/?female,thin,women-designer4-1", name: "Phong cách tối giản"},
+                        {url: "https://source.unsplash.com/random/600x600/?female,thin,women-designer4-2", name: "Phong cách sang trọng"},
+                        {url: "https://source.unsplash.com/random/600x600/?female,thin,women-designer4-3", name: "Phong cách nghệ thuật"}
+                    ]
+                },
+                fat: {
+                    designer1: [
+                        {url: "https://source.unsplash.com/random/600x600/?female,fat,design1", name: "Phong cách thoải mái"},
+                        {url: "https://source.unsplash.com/random/600x600/?female,fat,design2", name: "Phong cách công sở"},
+                        {url: "https://source.unsplash.com/random/600x600/?female,fat,design3", name: "Phong cách dạo phố"}
+                    ],
+                    designer2: [
+                        {url: "https://source.unsplash.com/random/600x600/?female,fat,women-designer1", name: "Phong cách thanh lịch"},
+                        {url: "https://source.unsplash.com/random/600x600/?female,fat,women-designer2", name: "Phong cách thể thao"},
+                        {url: "https://source.unsplash.com/random/600x600/?female,fat,women-designer3", name: "Phong cách tiệc tùng"}
+                    ],
+                    designer3: [
+                        {url: "https://source.unsplash.com/random/600x600/?female,fat,designer3-1", name: "Phong cách cổ điển"},
+                        {url: "https://source.unsplash.com/random/600x600/?female,fat,designer3-2", name: "Phong cách hiện đại"},
+                        {url: "https://source.unsplash.com/random/600x600/?female,fat,designer3-3", name: "Phong cách đường phố"}
+                    ],
+                    designer4: [
+                        {url: "https://source.unsplash.com/random/600x600/?female,fat,women-designer4-1", name: "Phong cách tối giản"},
+                        {url: "https://source.unsplash.com/random/600x600/?female,fat,women-designer4-2", name: "Phong cách sang trọng"},
+                        {url: "https://source.unsplash.com/random/600x600/?female,fat,women-designer4-3", name: "Phong cách nghệ thuật"}
+                    ]
+                }
+            }
+        };
 
-      // Xử lý khi nhấn nút
-      $("#capture-btn").click(function () {
-        const targetDiv = $("#capture-div")[0]; // Lấy thẻ <div> cần chụp
+        // Biến lưu trữ các lựa chọn và carousel instance
+        let selections = {
+            gender: null,
+            bodyType: null,
+            designer: null
+        };
+        let glideInstance = null;
+        let currentSlideIndex = 0;
+        let selectedSlideIndex = null;
 
-        // Dùng html2canvas để chụp ảnh
-        html2canvas(targetDiv)
-          .then(function (canvas) {
-            canvas.toBlob(function (blob) {
-              const imgUrl = URL.createObjectURL(blob); // Tạo URL từ Blob
+        // Xử lý sự kiện chọn giới tính
+        document.querySelectorAll('.gender-option').forEach(button => {
+            button.addEventListener('click', function() {
+                document.querySelectorAll('.gender-option').forEach(btn => btn.classList.remove('selected'));
+                this.classList.add('selected');
+                selections.gender = this.dataset.value;
+                checkSelections();
+            });
+        });
 
-              if (isWebView()) {
-                // Nếu trong WebView, mở ảnh trong cửa sổ mới
-                const newWindow = window.open();
-                newWindow.document.write(
-                  `<h3>Nhấn giữ để lưu ảnh:</h3>
-                             <img src="${imgUrl}" style="max-width: 100%; height: auto;">`
-                );
-              } else {
-                // Nếu trong trình duyệt thông thường, mở ảnh trong tab mới
-                const link = document.createElement("a");
-                link.href = imgUrl;
-                link.target = "_blank"; // Mở trong tab mới
-                link.click();
-              }
-            }, "image/png");
-          })
-          .catch(function (error) {
-            console.error("Có lỗi khi chụp ảnh:", error);
-            alert("Không thể chụp ảnh trên trình duyệt này!");
-          });
-      });
+        // Xử lý sự kiện chọn thể trạng
+        document.querySelectorAll('.body-option').forEach(button => {
+            button.addEventListener('click', function() {
+                document.querySelectorAll('.body-option').forEach(btn => btn.classList.remove('selected'));
+                this.classList.add('selected');
+                selections.bodyType = this.dataset.value;
+                checkSelections();
+            });
+        });
+
+        // Xử lý sự kiện chọn nhà thiết kế
+        document.querySelectorAll('.designer-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.designer-option').forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                selections.designer = this.dataset.value;
+                checkSelections();
+            });
+        });
+
+        // Kiểm tra xem đã chọn đủ 3 phần chưa
+        function checkSelections() {
+            if (selections.gender && selections.bodyType && selections.designer) {
+                showResults();
+                document.getElementById('completeBtn').style.display = 'block';
+            } else {
+                document.getElementById('completeBtn').style.display = 'none';
+            }
+        }
+
+        // Hiển thị loading
+        function showLoading() {
+            const loadingElement = document.getElementById('loading');
+            loadingElement.style.display = 'flex';
+        }
+
+        // Ẩn loading
+        function hideLoading() {
+            const loadingElement = document.getElementById('loading');
+            loadingElement.style.display = 'none';
+        }
+
+        function handleSlideClick(index) {
+            console.log('Clicked slide index:', index);
+            
+            // Bỏ active tất cả các slide
+            document.querySelectorAll('.glide__slide').forEach(slide => {
+                slide.classList.remove('glide__slide--active');
+            });
+            
+            // Active slide được click
+            const slides = document.querySelectorAll('.glide__slide');
+            const actualIndex = Array.from(slides).findIndex(
+                slide => parseInt(slide.dataset.index) === index
+            );
+            
+            if (actualIndex !== -1) {
+                slides[actualIndex].classList.add('glide__slide--active');
+                selectedSlideIndex = index;
+                console.log('Actual slide activated:', actualIndex);
+            }
+        }
+
+
+        function showResults() {
+            const resultDiv = document.getElementById('result');
+            const slidesContainer = document.getElementById('slides-container');
+            
+            showLoading();
+            resultDiv.style.display = 'block';
+            slidesContainer.innerHTML = '';
+            selectedSlideIndex = null;
+            
+            const images = imageData[selections.gender][selections.bodyType][selections.designer];
+            
+            images.forEach((image, index) => {
+                const slide = document.createElement('li');
+                slide.className = 'glide__slide';
+                slide.dataset.index = index;
+                
+                const img = document.createElement('img');
+                img.src = image.url;
+                img.alt = image.name;
+                
+                slide.appendChild(img);
+                slidesContainer.appendChild(slide);
+            });
+            
+            setTimeout(hideLoading, 1000);
+            
+            if (glideInstance) {
+                glideInstance.destroy();
+            }
+            
+            // Khởi tạo Glide với các sự kiện
+            glideInstance = new Glide('.glide', {
+                type: 'carousel',
+                perView: 3,
+                gap: 20,
+                breakpoints: {
+                    800: { perView: 2 },
+                    500: { perView: 1 }
+                }
+            });
+            
+            // Xử lý sự kiện click sau khi khởi tạo
+            glideInstance.on('mount.after', () => {
+                document.querySelectorAll('.glide__slide').forEach(slide => {
+                    slide.addEventListener('click', function() {
+                        const clickedIndex = parseInt(this.dataset.index);
+                        handleSlideClick(clickedIndex);
+                    });
+                });
+            });
+            
+            glideInstance.mount();
+            
+            glideInstance.on('run', function() {
+                currentSlideIndex = glideInstance.index;
+            });
+        }
+
+        // Xử lý sự kiện khi click nút Hoàn thành
+        document.getElementById('completeBtn').addEventListener('click', function() {
+            const images = imageData[selections.gender][selections.bodyType][selections.designer];
+            const currentSlide = images[currentSlideIndex];
+            const selectedSlide = selectedSlideIndex !== null ? images[selectedSlideIndex] : null;
+            
+            console.log("Thông tin lựa chọn:");
+            console.log("- Giới tính:", selections.gender === 'male' ? 'Nam' : 'Nữ');
+            console.log("- Thể trạng:", selections.bodyType === 'thin' ? 'Gầy' : 'Béo');
+            console.log("- Nhà thiết kế:", document.querySelector('.designer-option.selected p').textContent);
+            
+            if (selectedSlide) {
+                console.log("- Phong cách đã chọn:", selectedSlide.name);
+                console.log("- URL hình ảnh:", selectedSlide.url);
+                alert(`Bạn đã chọn phong cách: ${selectedSlide.name}`);
+            } else {
+                console.log("- Bạn chưa chọn phong cách nào");
+                alert("Bạn chưa chọn phong cách nào!");
+            }
+        });
     </script>
-  </body>
-</html> -->
+</body>
+</html>

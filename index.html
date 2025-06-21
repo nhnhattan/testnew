@@ -1,58 +1,47 @@
 <!DOCTYPE html>
 <html lang="vi">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chụp và Mở Ảnh</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <style>
-      #capture-div {
-        width: 300px;
-        height: 200px;
-        background: lightblue;
-        text-align: center;
-        line-height: 200px;
-        font-size: 20px;
-      }
-      button {
-        margin-top: 20px;
-        padding: 10px 20px;
-        font-size: 16px;
-      }
-    </style>
-  </head>
-  <div
-    id="capture-div"
-    style="width: 300px; height: 200px; background: lightblue;"
-  >
-    <p>Đây là nội dung cần chụp</p>
-  </div>
-  <button id="capture-btn">Chụp và tải xuống</button>
+<head>
+  <meta charset="UTF-8">
+  <title>Chia sẻ qua Zalo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Thẻ OG để hiển thị đẹp khi chia sẻ -->
+  <meta property="og:title" content="Trang chia sẻ qua Zalo">
+  <meta property="og:description" content="Đây là một ví dụ về nút chia sẻ link qua Zalo bằng JavaScript.">
+  <meta property="og:image" content="https://example.com/image.jpg"> <!-- Thay bằng ảnh thật -->
+  <meta property="og:url" content="https://example.com"> <!-- URL bạn muốn chia sẻ -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px;
+    }
+    button {
+      padding: 12px 24px;
+      font-size: 16px;
+      background-color: #0068ff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #004fc1;
+    }
+  </style>
+</head>
+<body>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  <h1>Chia sẻ liên kết qua Zalo</h1>
+  <p>Nhấn nút bên dưới để chia sẻ trang này qua Zalo.</p>
+  <button onclick="shareToZalo()">📤 Chia sẻ qua Zalo</button>
 
   <script>
-        function isWebView() {
-        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-        return userAgent.includes("FB") || userAgent.includes("Zalo") || userAgent.includes("Line");
-    }
-            document.getElementById("capture-btn").addEventListener("click", function () {
-            const targetDiv = document.getElementById("capture-div");
-
-            html2canvas(targetDiv).then((canvas) => {
-                canvas.toBlob((blob) => {
-                  if (isWebView()) {
-                      alert("Không thể tải ảnh trên trình duyệt này")
-        } else {
-            saveAs(blob, "screenshot.png"); // Sử dụng FileSaver.js
-        }
-                }, "image/png");
-            }).catch(err => {
-              alert("Không thể chụp ảnh trên trình duyệt này!");
-              console.error(err);
-            });
-        });
+  function shareToZalo() {
+    const url = encodeURIComponent('https://example.com'); // Trang bạn muốn chia sẻ
+    const zaloUrl = `https://zalo.me/share?url=${url}`;
+    window.location.href = zaloUrl;
+  }
   </script>
+
+</body>
 </html>
