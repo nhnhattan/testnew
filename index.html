@@ -2,45 +2,42 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Chia sẻ qua Zalo</title>
+  <title>Chia sẻ qua trình duyệt</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Thẻ OG để hiển thị đẹp khi chia sẻ -->
-  <meta property="og:title" content="Trang chia sẻ qua Zalo">
-  <meta property="og:description" content="Đây là một ví dụ về nút chia sẻ link qua Zalo bằng JavaScript.">
-  <meta property="og:image" content="https://example.com/image.jpg"> <!-- Thay bằng ảnh thật -->
-  <meta property="og:url" content="https://example.com"> <!-- URL bạn muốn chia sẻ -->
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 50px;
-    }
     button {
-      padding: 12px 24px;
+      padding: 12px 20px;
       font-size: 16px;
-      background-color: #0068ff;
+      background-color: #28a745;
       color: white;
       border: none;
       border-radius: 5px;
       cursor: pointer;
     }
     button:hover {
-      background-color: #004fc1;
+      background-color: #218838;
     }
   </style>
 </head>
 <body>
 
-  <h1>Chia sẻ liên kết qua Zalo</h1>
-  <p>Nhấn nút bên dưới để chia sẻ trang này qua Zalo.</p>
-  <button onclick="shareToZalo()">📤 Chia sẻ qua Zalo</button>
+  <h2>Chia sẻ trang này</h2>
+  <button onclick="share()">📤 Chia sẻ</button>
 
   <script>
-  function shareToZalo() {
-    const url = encodeURIComponent('https://example.com'); // Trang bạn muốn chia sẻ
-    const zaloUrl = `https://zalo.me/share?url=${url}`;
-    window.location.href = zaloUrl;
-  }
+    function share() {
+      if (navigator.share) {
+        navigator.share({
+          title: 'Trang chia sẻ',
+          text: 'Hãy xem thử nội dung này nhé!',
+          url: 'https://example.com'
+        })
+        .then(() => console.log('Chia sẻ thành công'))
+        .catch(error => console.log('Lỗi chia sẻ:', error));
+      } else {
+        alert('Trình duyệt không hỗ trợ chia sẻ trực tiếp.');
+      }
+    }
   </script>
 
 </body>
